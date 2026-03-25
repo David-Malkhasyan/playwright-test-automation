@@ -1,0 +1,49 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Playwright output
+test-results/
+playwright-report/
+report/global-state.json
+*.zip
+
+# Environment files
+#.env
+#.env.*
+#*.env
+#db-credentials.env
+#*.local
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Optional build files
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+
+# IDE settings
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swp
+allure-results/

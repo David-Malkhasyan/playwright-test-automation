@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@api-fixtures": [
+        "api/api-fixtures/index.ts"
+      ],
+      "@builders": [
+        "data/builders/index.ts"
+      ],
+      "@services": [
+        "api/services/index.ts"
+      ],
+      "@dtos": [
+        "api/dto/index.ts"
+      ],
+      "@db-dtos": [
+        "db/dto/index.ts"
+      ]
+    },
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "types": [
+      "node",
+      "@playwright/test"
+    ],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "tests",
+    "playwright.config.ts",
+    "api",
+    "db",
+    "utils",
+    "data",
+    "config",
+    "ui",
+    "enum"
+  ]
+}
