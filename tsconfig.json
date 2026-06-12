@@ -13,9 +13,6 @@
       ],
       "@dtos": [
         "api/dto/index.ts"
-      ],
-      "@db-dtos": [
-        "db/dto/index.ts"
       ]
     },
     "target": "ES2022",
@@ -39,6 +36,7 @@
     "data",
     "config",
     "ui",
-    "enum"
+    "enum",
+    "scripts"
   ]
 }

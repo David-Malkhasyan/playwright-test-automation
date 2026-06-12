@@ -1,4 +1,4 @@
-import {expect, Page, test as base} from '@playwright/test';
+import {expect, test as base} from '@playwright/test';
 import {JetBrainsMainPage} from '../pages/JetBrainsMainPage';
 
 export type UiFixtures = {

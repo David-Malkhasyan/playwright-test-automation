@@ -2,39 +2,79 @@
 
 ## Feature Description
 
-PetStore API provides functionality to manage pets in a store. These checks verify that pets can be added, retrieved, updated, and deleted correctly.
+The PetStore API manages pets, store orders, and users. These checks verify each domain
+behaves correctly across create / read / update / delete and auth flows. Every test creates
+the data it needs and reads it back within the same test (the public sandbox does not persist
+reliably), polling with `toPass()` for eventual consistency.
 
 ---
 
-## Test Scenarios
+## Pet — `tests/api/petstore.test.ts`
 
-### pst-001 - should add a new pet to the store
+### pst-001 - create an available pet then read it back
+1. Build a pet payload with status `available`.
+2. POST `/v2/pet`; expect 200, and the echoed name + status to match.
+3. GET `/v2/pet/{id}` (polled); expect 200 and the id + name to match.
 
-**Steps:**
+### pst-002 - create a pending pet then read it back
+1. As pst-001 but with status `pending`.
 
-1. Define a new pet with a unique ID, name (e.g., "Buddy"), and other attributes.
-2. Send a POST request to the `pet` endpoint with the pet payload.
-3. Verify the response status is 200 OK.
-4. Verify the response body contains the correct pet name.
+### pst-003 - update a created pet's name and status
+1. Create a pet and read it back.
+2. PUT `/v2/pet` with a new name and status `sold`; expect the echoed values to match.
+3. GET `/v2/pet/{id}` (polled); expect the name to reflect the update.
+
+### pst-004 - delete a created pet then confirm it is gone
+1. Create a pet and read it back.
+2. DELETE `/v2/pet/{id}`; expect 200.
+3. GET `/v2/pet/{id}`; expect 404.
+
+### pst-005-{available|pending|sold} - findByStatus returns only matching pets
+1. Seed a pet with the target status.
+2. GET `/v2/pet/findByStatus?status=...`; expect 200 and an array.
+3. Soft-assert that no returned pet carries a different status.
 
 ---
 
-### pst-002 - should find pet by id
+## Store — `tests/api/store.test.ts`
 
-**Steps:**
+### sto-001 - place an order then read it back
+1. Build an order payload with status `placed`.
+2. POST `/v2/store/order`; expect 200 and echoed status + complete flag.
+3. GET `/v2/store/order/{id}` (polled); expect 200 and the id to match.
 
-1. Use an existing pet ID (e.g., from a previously created pet).
-2. Send a GET request to the `pet/{petId}` endpoint.
-3. Verify the response status is 200 OK.
-4. Verify the response body contains the correct pet ID.
+### sto-002 - place an approved order then read it back
+1. As sto-001 but with status `approved`.
+
+### sto-003 - place an order then delete it
+1. Place an order and read it back.
+2. DELETE `/v2/store/order/{id}`; expect 200.
+3. GET `/v2/store/order/{id}`; expect 404.
+
+### sto-004 - inventory returns a status to count map
+1. GET `/v2/store/inventory`; expect 200.
+2. Expect at least one bucket and every count to be an integer.
 
 ---
 
-### pst-003 - should update pet status
+## User — `tests/api/user.test.ts`
 
-**Steps:**
+### usr-001 - create a user then read it back
+1. Build a user payload with a unique username.
+2. POST `/v2/user`; expect 200 and envelope `code` 200.
+3. GET `/v2/user/{username}` (polled); expect 200 and the username to match.
 
-1. Use an existing pet object and update its status (e.g., to "pending").
-2. Send a PUT request to the `pet` endpoint with the updated pet payload.
-3. Verify the response status is 200 OK.
-4. Verify the response body contains the updated status.
+### usr-002 - update a created user then read it back
+1. Create a user and read it back.
+2. PUT `/v2/user/{username}` with a new email.
+3. GET `/v2/user/{username}` (polled); expect the email to reflect the update.
+
+### usr-003 - delete a created user then confirm it is gone
+1. Create a user and read it back.
+2. DELETE `/v2/user/{username}`; expect 200.
+3. GET `/v2/user/{username}`; expect 404.
+
+### usr-004 - create a user then log in and out
+1. Create a user.
+2. GET `/v2/user/login` (polled); expect 200 and a "logged in" message.
+3. GET `/v2/user/logout`; expect 200.

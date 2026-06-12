@@ -1,33 +1,26 @@
 import {ConfiguredApiClient} from "../base/api-client-factory";
 import {ApiType} from "../base/api-config";
-import {Pet, ApiResponseData} from "../dto/petstore.dto";
-import {ApiResponse} from "../base/api-types";
 import {APIRequestContext} from "@playwright/test";
-import {PETSTORE_ROUTES} from "./petstore-routes";
+import {PetController} from "./controllers/pet-controller";
+import {StoreController} from "./controllers/store-controller";
+import {UserController} from "./controllers/user-controller";
 
+/**
+ * Single service for the Petstore host, composed of one controller per tag group
+ * (pet / store / user). Usage reads as petStore.pet.createParsed(...),
+ * petStore.store.placeOrderParsed(...), petStore.user.loginParsed(...).
+ */
 export class PetStoreService extends ConfiguredApiClient {
+    public readonly pet: PetController;
+    public readonly store: StoreController;
+    public readonly user: UserController;
+
     constructor(context?: APIRequestContext) {
         super(ApiType.PETSTORE, "PetStore Service");
         if (context) this.setContext(context);
-    }
 
-    async addPet(pet: Pet): Promise<ApiResponse<Pet>> {
-        return this.post(PETSTORE_ROUTES.PET, pet);
-    }
-
-    async getPetById(petId: number): Promise<ApiResponse<Pet>> {
-        return this.get(PETSTORE_ROUTES.PET_BY_ID(petId));
-    }
-
-    async updatePet(pet: Pet): Promise<ApiResponse<Pet>> {
-        return this.put(PETSTORE_ROUTES.PET, pet);
-    }
-
-    async deletePet(petId: number): Promise<ApiResponse<ApiResponseData>> {
-        return this.delete(PETSTORE_ROUTES.PET_BY_ID(petId));
-    }
-
-    async findPetsByStatus(status: 'available' | 'pending' | 'sold'): Promise<ApiResponse<Pet[]>> {
-        return this.get(PETSTORE_ROUTES.PET_FINDBYSTATUS, {params: {status}});
+        this.pet = new PetController(this);
+        this.store = new StoreController(this);
+        this.user = new UserController(this);
     }
 }

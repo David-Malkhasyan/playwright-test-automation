@@ -3,17 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Sample Playwright project for Portfolio",
+  "description": "Layered Playwright + TypeScript API/UI test framework (Swagger Petstore + JetBrains) — portfolio sample.",
   "scripts": {
     "test": "playwright test",
     "test:ui": "playwright test --project=ui",
     "test:api": "playwright test --project=api",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
-    "report": "playwright show-report",
+    "report": "playwright show-report report/playwright-report",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "prepare": "playwright install --with-deps"
+    "typecheck": "tsc --noEmit",
+    "prepare": "playwright install --with-deps",
+    "swagger:update": "node scripts/fetch-swagger.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

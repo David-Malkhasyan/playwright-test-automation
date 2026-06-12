@@ -9,7 +9,9 @@ export default defineConfig({
     outputDir: 'report/test-results',
     timeout: parseInt(process.env.TIMEOUT_MS || '30000', 10),
     fullyParallel: false,
-    workers: 15,
+    workers: parseInt(process.env.WORKERS || '4', 10),
+    // The public Petstore sandbox occasionally returns transient 5xx; retries absorb that noise.
+    retries: parseInt(process.env.RETRIES || '2', 10),
     reporter: [
         ['html', {open: 'never', outputFolder: 'report/playwright-report'}],
         ['junit', {outputFile: 'report/playwright-report/results.xml'}],
@@ -21,8 +23,14 @@ export default defineConfig({
     },
     projects: [
         {
+            name: 'setup',
+            testMatch: /[\\/]tests[\\/]setup[\\/].*\.test\.ts$/,
+            workers: 1,
+        },
+        {
             name: 'api',
             testMatch: /[\\/]tests[\\/]api[\\/].*\.test\.ts$/,
+            dependencies: ['setup'],
         },
         {
             name: 'ui',
